@@ -30,7 +30,8 @@ jobs:
       - name: Guard the clean public workspace
         run: python -B tools/publication_guard.py
       - name: Install reviewed schema dependencies
-        run: python -m pip install --only-binary=:all: -r requirements-dev.txt
+        run: |
+          python -m pip install --only-binary=:all: -r requirements-dev.txt
       - name: Build pinned independent reader from public source
         run: python -B tools/build_reader.py
       - name: Check reproducible synthetic data
