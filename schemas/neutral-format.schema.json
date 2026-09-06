@@ -1,0 +1,567 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:legacy-gr2:neutral:1.0.0",
+  "title": "Legacy skeletal neutral asset — public schema 1.0.0",
+  "description": "Full affine source representation. Presence in a schema is not permission to publish source asset data.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "legacy-skeletal-neutral"
+    },
+    "version": {
+      "const": "1.0.0"
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "synthetic",
+            "external-lawfully-supplied"
+          ]
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "generator_ref": {
+          "type": "string"
+        },
+        "license_statement": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "source_id",
+        "generator_ref",
+        "license_statement"
+      ],
+      "additionalProperties": false
+    },
+    "coordinates": {
+      "type": "object",
+      "properties": {
+        "units": {
+          "const": "cm"
+        },
+        "vectors": {
+          "const": "column"
+        },
+        "local_order": {
+          "const": "T*R*S"
+        },
+        "scale_shear_layout": {
+          "const": "column-major"
+        },
+        "handedness": {
+          "const": "right"
+        },
+        "up_axis": {
+          "const": "+Z"
+        },
+        "forward_axis": {
+          "const": "-Y"
+        },
+        "uv_origin": {
+          "const": "bottom-left"
+        }
+      },
+      "required": [
+        "units",
+        "vectors",
+        "local_order",
+        "scale_shear_layout",
+        "handedness",
+        "up_axis",
+        "forward_axis",
+        "uv_origin"
+      ],
+      "additionalProperties": false
+    },
+    "meshes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/mesh"
+      },
+      "minItems": 1
+    },
+    "skeleton": {
+      "type": "object",
+      "properties": {
+        "bones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/bone"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "bones"
+      ],
+      "additionalProperties": false
+    },
+    "materials": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/material"
+      },
+      "minItems": 1
+    },
+    "animations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/animation"
+      },
+      "minItems": 0
+    },
+    "motion_sidecar": {
+      "type": "object",
+      "properties": {
+        "actor_motion_applied": {
+          "const": false
+        },
+        "declared_loop_translation": {
+          "$ref": "#/$defs/vec3"
+        },
+        "descriptor_accumulation": {
+          "$ref": "#/$defs/vec3"
+        },
+        "unbound_tracks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_ -]{0,63}$"
+              },
+              "evidence": {
+                "type": "string"
+              },
+              "transform": {
+                "$ref": "#/$defs/transform"
+              }
+            },
+            "required": [
+              "name",
+              "evidence",
+              "transform"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        },
+        "interpretation": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor_motion_applied",
+        "declared_loop_translation",
+        "descriptor_accumulation",
+        "unbound_tracks",
+        "interpretation"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "provenance",
+    "coordinates",
+    "meshes",
+    "skeleton",
+    "materials",
+    "animations",
+    "motion_sidecar"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "vec2": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "vec3": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "quat": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "scaleShear": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 9,
+      "maxItems": 9
+    },
+    "matrix4": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        },
+        "minItems": 4,
+        "maxItems": 4
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "transform": {
+      "type": "object",
+      "properties": {
+        "translation": {
+          "$ref": "#/$defs/vec3"
+        },
+        "rotation": {
+          "$ref": "#/$defs/quat"
+        },
+        "scale_shear": {
+          "$ref": "#/$defs/scaleShear"
+        }
+      },
+      "required": [
+        "translation",
+        "rotation",
+        "scale_shear"
+      ],
+      "additionalProperties": false
+    },
+    "bone": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_ -]{0,63}$"
+        },
+        "parent": {
+          "type": "integer",
+          "minimum": -1
+        },
+        "rest": {
+          "$ref": "#/$defs/transform"
+        },
+        "inverse_bind": {
+          "$ref": "#/$defs/matrix4"
+        },
+        "helper": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "parent",
+        "rest",
+        "inverse_bind",
+        "helper"
+      ],
+      "additionalProperties": false
+    },
+    "influence": {
+      "type": "object",
+      "properties": {
+        "bone": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "bone",
+        "weight"
+      ],
+      "additionalProperties": false
+    },
+    "mesh": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_ -]{0,63}$"
+        },
+        "positions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/vec3"
+          },
+          "minItems": 1
+        },
+        "normals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/vec3"
+          },
+          "minItems": 1
+        },
+        "uv0": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/vec2"
+          },
+          "minItems": 1
+        },
+        "triangles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "skin": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/influence"
+            },
+            "minItems": 1
+          },
+          "minItems": 1
+        },
+        "face_materials": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_ -]{0,63}$"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "id",
+        "positions",
+        "normals",
+        "uv0",
+        "triangles",
+        "skin",
+        "face_materials"
+      ],
+      "additionalProperties": false
+    },
+    "material": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_ -]{0,63}$"
+        },
+        "base_color": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "texture_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 0
+        },
+        "two_sided_hint": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "alpha_mode_hint": {
+          "enum": [
+            "opaque",
+            "mask",
+            "blend",
+            "unknown"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "base_color",
+        "texture_refs",
+        "two_sided_hint",
+        "alpha_mode_hint"
+      ],
+      "additionalProperties": false
+    },
+    "channel": {
+      "type": "object",
+      "properties": {
+        "semantics": {
+          "enum": [
+            "sampled",
+            "constant",
+            "identity",
+            "rest",
+            "unsupported",
+            "absent_unresolved"
+          ]
+        },
+        "codec": {
+          "type": "string"
+        },
+        "format_id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "evidence": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "knots": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 0
+            },
+            "controls": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 0
+              },
+              "minItems": 0
+            }
+          },
+          "required": [
+            "knots",
+            "controls"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "semantics",
+        "codec",
+        "format_id",
+        "evidence",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    "sample": {
+      "type": "object",
+      "properties": {
+        "time_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "transform": {
+          "$ref": "#/$defs/transform"
+        }
+      },
+      "required": [
+        "time_seconds",
+        "transform"
+      ],
+      "additionalProperties": false
+    },
+    "track": {
+      "type": "object",
+      "properties": {
+        "bone": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "interpolation": {
+          "const": "linear-translation-scale_shear+slerp-rotation"
+        },
+        "native_channels": {
+          "type": "object",
+          "properties": {
+            "translation": {
+              "$ref": "#/$defs/channel"
+            },
+            "rotation": {
+              "$ref": "#/$defs/channel"
+            },
+            "scale_shear": {
+              "$ref": "#/$defs/channel"
+            }
+          },
+          "required": [
+            "translation",
+            "rotation",
+            "scale_shear"
+          ],
+          "additionalProperties": false
+        },
+        "samples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sample"
+          },
+          "minItems": 2
+        }
+      },
+      "required": [
+        "bone",
+        "interpolation",
+        "native_channels",
+        "samples"
+      ],
+      "additionalProperties": false
+    },
+    "animation": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_ -]{0,63}$"
+        },
+        "duration_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "tracks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/track"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "name",
+        "duration_seconds",
+        "tracks"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

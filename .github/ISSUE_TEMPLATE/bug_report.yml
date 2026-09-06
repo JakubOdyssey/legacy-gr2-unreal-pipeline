@@ -1,0 +1,32 @@
+name: Synthetic reproduction
+description: Report a tooling or numerical validation defect without private assets.
+body:
+  - type: markdown
+    attributes:
+      value: Do not attach game data, proprietary source, credentials or full private animation dumps. Use original synthetic inputs.
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and observed behavior
+      description: Identify the representation contract or numerical threshold involved.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Synthetic reproduction
+      description: Provide commands or a small generator change using original data only.
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Public tool versions
+      description: OS, Python, compiler and source pin. Omit usernames and local paths.
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Publication check
+      options:
+        - label: This report contains no proprietary assets, private source or secrets.
+          required: true
