@@ -4,7 +4,17 @@
 
 This project investigates how to preserve an animated character across a legacy binary decoder, a neutral asset format, an interchange writer and a modern engine. It treats geometry, rig structure, skin weights and animation semantics as measurable contracts. The exact neutral representation remains the source of truth; an exported file is a candidate until an independent reader verifies it.
 
-The public release includes Python tooling, a versioned JSON Schema, an original synthetic corpus, a deterministic ASCII FBX writer and a C harness for independent ufbx readback. The private GR2 decoder integration and game corpus are **not distributed**. Unreal import validation is the next research gate, not a completed feature.
+The public release includes Python tooling, a versioned JSON Schema, an original synthetic corpus, a deterministic ASCII FBX writer and a C harness for independent ufbx readback. The private GR2 decoder integration and game corpus are **not distributed**. Unreal skeletal mesh and animation import validation is now a completed research milestone for a real legacy test sample.
+
+## Latest validation milestone
+
+**Unreal Engine 5.8.2 validation completed — PASS WITH LIMITATIONS.** These are aggregated results for a real legacy test sample; public CI continues to validate only synthetic/public data.
+
+- A skeletal mesh was successfully created, preserving the 75-bone skeleton, hierarchy and all tested skin influences.
+- Two animation clips imported successfully, with 60 Hz and 120 Hz sampling policies preserved and no root-motion baking introduced.
+- A project-local compression profile was qualified. Maximum compressed animation errors remained within 0.5 cm positional/deformation, 0.5° local orientation and 0.001 s duration tolerances.
+
+The exact neutral representation remains authoritative. Known limitations include Unreal TRS/affine projection and deterministic bone-name normalization.
 
 ## Why this project exists
 
@@ -25,7 +35,7 @@ flowchart TD
     C --> E[Measured TRS projection and sampling policy]
     E --> F[Deterministic FBX]
     F --> G[Independent reader and numerical comparison]
-    G --> H[Future Unreal import validation]
+    G --> H[Unreal import validation]
     C -. optional future route .-> I[Custom editor importer]
     I --> H
 ```
@@ -58,7 +68,7 @@ The **public synthetic corpus is different**: 48 vertices, 72 triangles, 7 bones
 3. **Locomotion ownership:** preserve local skeletal bounce without double-applying descriptor or actor movement.
 4. **Neutral source of truth:** store full affine transforms, hierarchy, binds, weights and native channel metadata separately from projected derivatives.
 5. **Independent validation:** compare the writer's output through a different parser, including evaluated skinning rather than only file structure.
-6. **Representation limits:** measure off-diagonal-only removal separately from FBX interpolation and future engine behavior.
+6. **Representation limits:** measure off-diagonal-only removal separately from FBX interpolation and engine behavior.
 7. **Evidence-driven architecture:** use standard gameplay assets where measured fidelity supports them; reserve a custom importer/deformer for a demonstrated need.
 
 Some of these findings came from the private investigation; their general rules are documented here. Public tests exercise the corresponding synthetic contracts, not a universal GR2 decoder. [Animation semantics](docs/animation-semantics.md) · [Development history](docs/development-history.md).
@@ -128,15 +138,16 @@ No Metin2 assets, proprietary Granny SDK/runtime binaries, game models, original
 
 ## Current status and roadmap
 
-Experimental research tooling, not production-ready conversion software. Local synthetic validation is available now; the private-corpus results are historical aggregates; Unreal runtime fidelity remains unverified.
+Experimental research tooling, not production-ready conversion software. Local synthetic validation is available now. Unreal skeletal mesh and animation import validation is complete for the selected test sample, with the limitations documented above.
 
-- Unreal Engine import and component-pose validation.
+- **Complete:** Unreal skeletal import validation.
+- **Complete:** Unreal animation validation.
+- **Next:** Appearance/material/attachment validation using original/public test data.
 - Broader original synthetic regression cases, especially inherited nonuniform scale.
 - Neutral schema evolution and migration rules.
 - Expanded CLI diagnostics and deterministic import manifests.
-- Material reconstruction research using original/public test data.
 - Skeletal asset batch validation with explicit failure isolation.
 - Optional neutral-to-Unreal editor importer when measured needs justify it.
-- An upgraded/remade test character using an original compatible rig.
+- **Later:** Visual remaster using an original test character and compatible rig.
 
 Project-owned code and synthetic data are [MIT-licensed](LICENSE). Please read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) before submitting data or changes.
